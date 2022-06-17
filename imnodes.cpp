@@ -33,8 +33,8 @@
 
 ImNodesContext* GImNodes = NULL;
 
-namespace IMNODES_NAMESPACE
-{
+// namespace IMNODES_NAMESPACE
+// {
 namespace
 {
 // [SECTION] bezier curve helpers
@@ -1735,7 +1735,7 @@ static inline void CalcMiniMapLayout()
         const ImVec2 grid_content_size = editor.GridContentBounds.IsInverted()
                                              ? max_size
                                              : ImFloor(editor.GridContentBounds.GetSize());
-        const float grid_content_aspect_ratio = grid_content_size.x / grid_content_size.y;
+        const float  grid_content_aspect_ratio = grid_content_size.x / grid_content_size.y;
         mini_map_size = ImFloor(
             grid_content_aspect_ratio > max_size_aspect_ratio
                 ? ImVec2(max_size.x, max_size.x / grid_content_aspect_ratio)
@@ -1975,15 +1975,15 @@ bool IsObjectSelected(const ImObjectPool<T>& objects, ImVector<int>& selected_in
 }
 
 } // namespace
-} // namespace IMNODES_NAMESPACE
+// } // namespace IMNODES_NAMESPACE
 
 // [SECTION] API implementation
 
-ImNodesIO::EmulateThreeButtonMouse::EmulateThreeButtonMouse() : Modifier(NULL) {}
+ImNodesIO::EmulateThreeButtonMouse::EmulateThreeButtonMouse() { Modifier = NULL; }
 
-ImNodesIO::LinkDetachWithModifierClick::LinkDetachWithModifierClick() : Modifier(NULL) {}
+ImNodesIO::LinkDetachWithModifierClick::LinkDetachWithModifierClick() { Modifier = NULL; }
 
-ImNodesIO::MultipleSelectModifier::MultipleSelectModifier() : Modifier(NULL) {}
+ImNodesIO::MultipleSelectModifier::MultipleSelectModifier() { Modifier = NULL; }
 
 ImNodesIO::ImNodesIO()
     : EmulateThreeButtonMouse(), LinkDetachWithModifierClick(),
@@ -2001,9 +2001,9 @@ ImNodesStyle::ImNodesStyle()
 {
 }
 
-namespace IMNODES_NAMESPACE
-{
-ImNodesContext* CreateContext()
+// namespace IMNODES_NAMESPACE
+// {
+EXTERN ImNodesContext* CreateContext()
 {
     ImNodesContext* ctx = IM_NEW(ImNodesContext)();
     if (GImNodes == NULL)
@@ -2012,7 +2012,7 @@ ImNodesContext* CreateContext()
     return ctx;
 }
 
-void DestroyContext(ImNodesContext* ctx)
+EXTERN void DestroyContext(ImNodesContext* ctx)
 {
     if (ctx == NULL)
         ctx = GImNodes;
@@ -2022,38 +2022,38 @@ void DestroyContext(ImNodesContext* ctx)
     IM_DELETE(ctx);
 }
 
-ImNodesContext* GetCurrentContext() { return GImNodes; }
+EXTERN ImNodesContext* GetCurrentContext() { return GImNodes; }
 
-void SetCurrentContext(ImNodesContext* ctx) { GImNodes = ctx; }
+EXTERN void SetCurrentContext(ImNodesContext* ctx) { GImNodes = ctx; }
 
-ImNodesEditorContext* EditorContextCreate()
+EXTERN ImNodesEditorContext* EditorContextCreate()
 {
     void* mem = ImGui::MemAlloc(sizeof(ImNodesEditorContext));
     new (mem) ImNodesEditorContext();
     return (ImNodesEditorContext*)mem;
 }
 
-void EditorContextFree(ImNodesEditorContext* ctx)
+EXTERN void EditorContextFree(ImNodesEditorContext* ctx)
 {
     ctx->~ImNodesEditorContext();
     ImGui::MemFree(ctx);
 }
 
-void EditorContextSet(ImNodesEditorContext* ctx) { GImNodes->EditorCtx = ctx; }
+EXTERN void EditorContextSet(ImNodesEditorContext* ctx) { GImNodes->EditorCtx = ctx; }
 
-ImVec2 EditorContextGetPanning()
+EXTERN ImVec2 EditorContextGetPanning()
 {
     const ImNodesEditorContext& editor = EditorContextGet();
     return editor.Panning;
 }
 
-void EditorContextResetPanning(const ImVec2& pos)
+EXTERN void EditorContextResetPanning(const ImVec2 pos)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     editor.Panning = pos;
 }
 
-void EditorContextMoveToNode(const int node_id)
+EXTERN void EditorContextMoveToNode(const int node_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     ImNodeData&           node = ObjectPoolFindOrCreateObject(editor.Nodes, node_id);
@@ -2062,13 +2062,13 @@ void EditorContextMoveToNode(const int node_id)
     editor.Panning.y = -node.Origin.y;
 }
 
-void SetImGuiContext(ImGuiContext* ctx) { ImGui::SetCurrentContext(ctx); }
+EXTERN void SetImGuiContext(ImGuiContext* ctx) { ImGui::SetCurrentContext(ctx); }
 
-ImNodesIO& GetIO() { return GImNodes->Io; }
+EXTERN ImNodesIO* GetIO() { return &GImNodes->Io; }
 
-ImNodesStyle& GetStyle() { return GImNodes->Style; }
+EXTERN ImNodesStyle* GetStyle() { return &GImNodes->Style; }
 
-void StyleColorsDark(ImNodesStyle* dest)
+EXTERN void StyleColorsDark(ImNodesStyle* dest)
 {
     if (dest == nullptr)
     {
@@ -2114,7 +2114,7 @@ void StyleColorsDark(ImNodesStyle* dest)
     dest->Colors[ImNodesCol_MiniMapCanvasOutline] = IM_COL32(200, 200, 200, 200);
 }
 
-void StyleColorsClassic(ImNodesStyle* dest)
+EXTERN void StyleColorsClassic(ImNodesStyle* dest)
 {
     if (dest == nullptr)
     {
@@ -2155,7 +2155,7 @@ void StyleColorsClassic(ImNodesStyle* dest)
     dest->Colors[ImNodesCol_MiniMapCanvasOutline] = IM_COL32(200, 200, 200, 200);
 }
 
-void StyleColorsLight(ImNodesStyle* dest)
+EXTERN void StyleColorsLight(ImNodesStyle* dest)
 {
     if (dest == nullptr)
     {
@@ -2199,7 +2199,7 @@ void StyleColorsLight(ImNodesStyle* dest)
     dest->Colors[ImNodesCol_MiniMapCanvasOutline] = IM_COL32(200, 200, 200, 200);
 }
 
-void BeginNodeEditor()
+EXTERN void BeginNodeEditor()
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_None);
     GImNodes->CurrentScope = ImNodesScope_Editor;
@@ -2275,7 +2275,7 @@ void BeginNodeEditor()
     }
 }
 
-void EndNodeEditor()
+EXTERN void EndNodeEditor()
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_Editor);
     GImNodes->CurrentScope = ImNodesScope_None;
@@ -2425,7 +2425,7 @@ void EndNodeEditor()
     ImGui::EndGroup();
 }
 
-void MiniMap(
+EXTERN void MiniMap(
     const float                                      minimap_size_fraction,
     const ImNodesMiniMapLocation                     location,
     const ImNodesMiniMapNodeHoveringCallback         node_hovering_callback,
@@ -2453,7 +2453,7 @@ void MiniMap(
     // of the state for the mini map in GImNodes for the actual drawing/updating
 }
 
-void BeginNode(const int node_id)
+EXTERN void BeginNode(const int node_id)
 {
     // Remember to call BeginNodeEditor before calling BeginNode
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_Editor);
@@ -2488,7 +2488,7 @@ void BeginNode(const int node_id)
     ImGui::BeginGroup();
 }
 
-void EndNode()
+EXTERN void EndNode()
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_Node);
     GImNodes->CurrentScope = ImNodesScope_Editor;
@@ -2512,7 +2512,7 @@ void EndNode()
     }
 }
 
-ImVec2 GetNodeDimensions(int node_id)
+EXTERN ImVec2 GetNodeDimensions(int node_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     const int             node_idx = ObjectPoolFind(editor.Nodes, node_id);
@@ -2521,13 +2521,13 @@ ImVec2 GetNodeDimensions(int node_id)
     return node.Rect.GetSize();
 }
 
-void BeginNodeTitleBar()
+EXTERN void BeginNodeTitleBar()
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_Node);
     ImGui::BeginGroup();
 }
 
-void EndNodeTitleBar()
+EXTERN void EndNodeTitleBar()
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_Node);
     ImGui::EndGroup();
@@ -2541,21 +2541,21 @@ void EndNodeTitleBar()
     ImGui::SetCursorPos(GridSpaceToEditorSpace(editor, GetNodeContentOrigin(node)));
 }
 
-void BeginInputAttribute(const int id, const ImNodesPinShape shape)
+EXTERN void BeginInputAttribute(const int id, const ImNodesPinShape shape)
 {
     BeginPinAttribute(id, ImNodesAttributeType_Input, shape, GImNodes->CurrentNodeIdx);
 }
 
-void EndInputAttribute() { EndPinAttribute(); }
+EXTERN void EndInputAttribute() { EndPinAttribute(); }
 
-void BeginOutputAttribute(const int id, const ImNodesPinShape shape)
+EXTERN void BeginOutputAttribute(const int id, const ImNodesPinShape shape)
 {
     BeginPinAttribute(id, ImNodesAttributeType_Output, shape, GImNodes->CurrentNodeIdx);
 }
 
-void EndOutputAttribute() { EndPinAttribute(); }
+EXTERN void EndOutputAttribute() { EndPinAttribute(); }
 
-void BeginStaticAttribute(const int id)
+EXTERN void BeginStaticAttribute(const int id)
 {
     // Make sure to call BeginNode() before calling BeginAttribute()
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_Node);
@@ -2567,7 +2567,7 @@ void BeginStaticAttribute(const int id)
     ImGui::PushID(id);
 }
 
-void EndStaticAttribute()
+EXTERN void EndStaticAttribute()
 {
     // Make sure to call BeginNode() before calling BeginAttribute()
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_Attribute);
@@ -2583,13 +2583,13 @@ void EndStaticAttribute()
     }
 }
 
-void PushAttributeFlag(const ImNodesAttributeFlags flag)
+EXTERN void PushAttributeFlag(const ImNodesAttributeFlags flag)
 {
     GImNodes->CurrentAttributeFlags |= flag;
     GImNodes->AttributeFlagStack.push_back(GImNodes->CurrentAttributeFlags);
 }
 
-void PopAttributeFlag()
+EXTERN void PopAttributeFlag()
 {
     // PopAttributeFlag called without a matching PushAttributeFlag!
     // The bottom value is always the default value, pushed in Initialize().
@@ -2599,7 +2599,7 @@ void PopAttributeFlag()
     GImNodes->CurrentAttributeFlags = GImNodes->AttributeFlagStack.back();
 }
 
-void Link(const int id, const int start_attr_id, const int end_attr_id)
+EXTERN void Link(const int id, const int start_attr_id, const int end_attr_id)
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_Editor);
 
@@ -2624,13 +2624,13 @@ void Link(const int id, const int start_attr_id, const int end_attr_id)
     }
 }
 
-void PushColorStyle(const ImNodesCol item, unsigned int color)
+EXTERN void PushColorStyle(const ImNodesCol item, unsigned int color)
 {
     GImNodes->ColorModifierStack.push_back(ImNodesColElement(GImNodes->Style.Colors[item], item));
     GImNodes->Style.Colors[item] = color;
 }
 
-void PopColorStyle()
+EXTERN void PopColorStyle()
 {
     IM_ASSERT(GImNodes->ColorModifierStack.size() > 0);
     const ImNodesColElement elem = GImNodes->ColorModifierStack.back();
@@ -2699,7 +2699,7 @@ void PushStyleVar(const ImNodesStyleVar item, const float value)
     IM_ASSERT(0 && "Called PushStyleVar() float variant but variable is not a float!");
 }
 
-void PushStyleVar(const ImNodesStyleVar item, const ImVec2& value)
+void PushStyleVar2(const ImNodesStyleVar item, const ImVec2 value)
 {
     const ImNodesStyleVarInfo* var_info = GetStyleVarInfo(item);
     if (var_info->Type == ImGuiDataType_Float && var_info->Count == 2)
@@ -2712,7 +2712,7 @@ void PushStyleVar(const ImNodesStyleVar item, const ImVec2& value)
     IM_ASSERT(0 && "Called PushStyleVar() ImVec2 variant but variable is not a ImVec2!");
 }
 
-void PopStyleVar(int count)
+EXTERN void PopStyleVar(int count)
 {
     while (count > 0)
     {
@@ -2734,35 +2734,35 @@ void PopStyleVar(int count)
     }
 }
 
-void SetNodeScreenSpacePos(const int node_id, const ImVec2& screen_space_pos)
+EXTERN void SetNodeScreenSpacePos(const int node_id, const ImVec2 screen_space_pos)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     ImNodeData&           node = ObjectPoolFindOrCreateObject(editor.Nodes, node_id);
     node.Origin = ScreenSpaceToGridSpace(editor, screen_space_pos);
 }
 
-void SetNodeEditorSpacePos(const int node_id, const ImVec2& editor_space_pos)
+EXTERN void SetNodeEditorSpacePos(const int node_id, const ImVec2 editor_space_pos)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     ImNodeData&           node = ObjectPoolFindOrCreateObject(editor.Nodes, node_id);
     node.Origin = EditorSpaceToGridSpace(editor, editor_space_pos);
 }
 
-void SetNodeGridSpacePos(const int node_id, const ImVec2& grid_pos)
+EXTERN void SetNodeGridSpacePos(const int node_id, const ImVec2 grid_pos)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     ImNodeData&           node = ObjectPoolFindOrCreateObject(editor.Nodes, node_id);
     node.Origin = grid_pos;
 }
 
-void SetNodeDraggable(const int node_id, const bool draggable)
+EXTERN void SetNodeDraggable(const int node_id, const bool draggable)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     ImNodeData&           node = ObjectPoolFindOrCreateObject(editor.Nodes, node_id);
     node.Draggable = draggable;
 }
 
-ImVec2 GetNodeScreenSpacePos(const int node_id)
+EXTERN ImVec2 GetNodeScreenSpacePos(const int node_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     const int             node_idx = ObjectPoolFind(editor.Nodes, node_id);
@@ -2771,7 +2771,7 @@ ImVec2 GetNodeScreenSpacePos(const int node_id)
     return GridSpaceToScreenSpace(editor, node.Origin);
 }
 
-ImVec2 GetNodeEditorSpacePos(const int node_id)
+EXTERN ImVec2 GetNodeEditorSpacePos(const int node_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     const int             node_idx = ObjectPoolFind(editor.Nodes, node_id);
@@ -2780,7 +2780,7 @@ ImVec2 GetNodeEditorSpacePos(const int node_id)
     return GridSpaceToEditorSpace(editor, node.Origin);
 }
 
-ImVec2 GetNodeGridSpacePos(const int node_id)
+EXTERN ImVec2 GetNodeGridSpacePos(const int node_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     const int             node_idx = ObjectPoolFind(editor.Nodes, node_id);
@@ -2789,16 +2789,16 @@ ImVec2 GetNodeGridSpacePos(const int node_id)
     return node.Origin;
 }
 
-void SnapNodeToGrid(int node_id)
+EXTERN void SnapNodeToGrid(int node_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     ImNodeData&           node = ObjectPoolFindOrCreateObject(editor.Nodes, node_id);
     node.Origin = SnapOriginToGrid(node.Origin);
 }
 
-bool IsEditorHovered() { return MouseInCanvas(); }
+EXTERN bool IsEditorHovered() { return MouseInCanvas(); }
 
-bool IsNodeHovered(int* const node_id)
+EXTERN bool IsNodeHovered(int* const node_id)
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_None);
     IM_ASSERT(node_id != NULL);
@@ -2812,7 +2812,7 @@ bool IsNodeHovered(int* const node_id)
     return is_hovered;
 }
 
-bool IsLinkHovered(int* const link_id)
+EXTERN bool IsLinkHovered(int* const link_id)
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_None);
     IM_ASSERT(link_id != NULL);
@@ -2826,7 +2826,7 @@ bool IsLinkHovered(int* const link_id)
     return is_hovered;
 }
 
-bool IsPinHovered(int* const attr)
+EXTERN bool IsPinHovered(int* const attr)
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_None);
     IM_ASSERT(attr != NULL);
@@ -2840,21 +2840,21 @@ bool IsPinHovered(int* const attr)
     return is_hovered;
 }
 
-int NumSelectedNodes()
+EXTERN int NumSelectedNodes()
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_None);
     const ImNodesEditorContext& editor = EditorContextGet();
     return editor.SelectedNodeIndices.size();
 }
 
-int NumSelectedLinks()
+EXTERN int NumSelectedLinks()
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_None);
     const ImNodesEditorContext& editor = EditorContextGet();
     return editor.SelectedLinkIndices.size();
 }
 
-void GetSelectedNodes(int* node_ids)
+EXTERN void GetSelectedNodes(int* node_ids)
 {
     IM_ASSERT(node_ids != NULL);
 
@@ -2866,7 +2866,7 @@ void GetSelectedNodes(int* node_ids)
     }
 }
 
-void GetSelectedLinks(int* link_ids)
+EXTERN void GetSelectedLinks(int* link_ids)
 {
     IM_ASSERT(link_ids != NULL);
 
@@ -2878,55 +2878,55 @@ void GetSelectedLinks(int* link_ids)
     }
 }
 
-void ClearNodeSelection()
+EXTERN void ClearNodesSelection()
 {
     ImNodesEditorContext& editor = EditorContextGet();
     editor.SelectedNodeIndices.clear();
 }
 
-void ClearNodeSelection(int node_id)
+EXTERN void ClearNodeSelection(int node_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     ClearObjectSelection(editor.Nodes, editor.SelectedNodeIndices, node_id);
 }
 
-void ClearLinkSelection()
+EXTERN void ClearLinksSelection()
 {
     ImNodesEditorContext& editor = EditorContextGet();
     editor.SelectedLinkIndices.clear();
 }
 
-void ClearLinkSelection(int link_id)
+EXTERN void ClearLinkSelection(int link_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     ClearObjectSelection(editor.Links, editor.SelectedLinkIndices, link_id);
 }
 
-void SelectNode(int node_id)
+EXTERN void SelectNode(int node_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     SelectObject(editor.Nodes, editor.SelectedNodeIndices, node_id);
 }
 
-void SelectLink(int link_id)
+EXTERN void SelectLink(int link_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     SelectObject(editor.Links, editor.SelectedLinkIndices, link_id);
 }
 
-bool IsNodeSelected(int node_id)
+EXTERN bool IsNodeSelected(int node_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     return IsObjectSelected(editor.Nodes, editor.SelectedNodeIndices, node_id);
 }
 
-bool IsLinkSelected(int link_id)
+EXTERN bool IsLinkSelected(int link_id)
 {
     ImNodesEditorContext& editor = EditorContextGet();
     return IsObjectSelected(editor.Links, editor.SelectedLinkIndices, link_id);
 }
 
-bool IsAttributeActive()
+EXTERN bool IsAttributeActive()
 {
     IM_ASSERT((GImNodes->CurrentScope & ImNodesScope_Node) != 0);
 
@@ -2938,7 +2938,7 @@ bool IsAttributeActive()
     return GImNodes->ActiveAttributeId == GImNodes->CurrentAttributeId;
 }
 
-bool IsAnyAttributeActive(int* const attribute_id)
+EXTERN bool IsAnyAttributeActive(int* const attribute_id)
 {
     IM_ASSERT((GImNodes->CurrentScope & (ImNodesScope_Node | ImNodesScope_Attribute)) == 0);
 
@@ -2955,7 +2955,7 @@ bool IsAnyAttributeActive(int* const attribute_id)
     return true;
 }
 
-bool IsLinkStarted(int* const started_at_id)
+EXTERN bool IsLinkStarted(int* const started_at_id)
 {
     // Call this function after EndNodeEditor()!
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_None);
@@ -2972,7 +2972,7 @@ bool IsLinkStarted(int* const started_at_id)
     return is_started;
 }
 
-bool IsLinkDropped(int* const started_at_id, const bool including_detached_links)
+EXTERN bool IsLinkDropped(int* const started_at_id, const bool including_detached_links)
 {
     // Call this function after EndNodeEditor()!
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_None);
@@ -2993,7 +2993,7 @@ bool IsLinkDropped(int* const started_at_id, const bool including_detached_links
     return link_dropped;
 }
 
-bool IsLinkCreated(
+EXTERN bool IsLinkCreated(
     int* const  started_at_pin_id,
     int* const  ended_at_pin_id,
     bool* const created_from_snap)
@@ -3033,7 +3033,7 @@ bool IsLinkCreated(
     return is_created;
 }
 
-bool IsLinkCreated(
+EXTERN bool IsNodeLinkCreated(
     int*  started_at_node_id,
     int*  started_at_pin_id,
     int*  ended_at_node_id,
@@ -3083,7 +3083,7 @@ bool IsLinkCreated(
     return is_created;
 }
 
-bool IsLinkDestroyed(int* const link_id)
+EXTERN bool IsLinkDestroyed(int* const link_id)
 {
     IM_ASSERT(GImNodes->CurrentScope == ImNodesScope_None);
 
@@ -3124,142 +3124,141 @@ void EditorLineHandler(ImNodesEditorContext& editor, const char* const line)
 }
 } // namespace
 
-const char* SaveCurrentEditorStateToIniString(size_t* const data_size)
-{
-    return SaveEditorStateToIniString(&EditorContextGet(), data_size);
-}
+// const char* SaveCurrentEditorStateToIniString(size_t* const data_size)
+// {
+//     return SaveEditorStateToIniString(&EditorContextGet(), data_size);
+// }
 
-const char* SaveEditorStateToIniString(
-    const ImNodesEditorContext* const editor_ptr,
-    size_t* const                     data_size)
-{
-    IM_ASSERT(editor_ptr != NULL);
-    const ImNodesEditorContext& editor = *editor_ptr;
+// EXTERN const char* SaveEditorStateToIniString(
+//     const ImNodesEditorContext* const editor_ptr, size_t* const data_size)
+// {
+//     IM_ASSERT(editor_ptr != NULL);
+//     const ImNodesEditorContext& editor = *editor_ptr;
 
-    GImNodes->TextBuffer.clear();
-    // TODO: check to make sure that the estimate is the upper bound of element
-    GImNodes->TextBuffer.reserve(64 * editor.Nodes.Pool.size());
+//     GImNodes->TextBuffer.clear();
+//     // TODO: check to make sure that the estimate is the upper bound of element
+//     GImNodes->TextBuffer.reserve(64 * editor.Nodes.Pool.size());
 
-    GImNodes->TextBuffer.appendf(
-        "[editor]\npanning=%i,%i\n", (int)editor.Panning.x, (int)editor.Panning.y);
+//     GImNodes->TextBuffer.appendf(
+//         "[editor]\npanning=%i,%i\n", (int)editor.Panning.x, (int)editor.Panning.y);
 
-    for (int i = 0; i < editor.Nodes.Pool.size(); i++)
-    {
-        if (editor.Nodes.InUse[i])
-        {
-            const ImNodeData& node = editor.Nodes.Pool[i];
-            GImNodes->TextBuffer.appendf("\n[node.%d]\n", node.Id);
-            GImNodes->TextBuffer.appendf("origin=%i,%i\n", (int)node.Origin.x, (int)node.Origin.y);
-        }
-    }
+//     for (int i = 0; i < editor.Nodes.Pool.size(); i++)
+//     {
+//         if (editor.Nodes.InUse[i])
+//         {
+//             const ImNodeData& node = editor.Nodes.Pool[i];
+//             GImNodes->TextBuffer.appendf("\n[node.%d]\n", node.Id);
+//             GImNodes->TextBuffer.appendf("origin=%i,%i\n", (int)node.Origin.x, (int)node.Origin.y);
+//         }
+//     }
 
-    if (data_size != NULL)
-    {
-        *data_size = GImNodes->TextBuffer.size();
-    }
+//     if (data_size != NULL)
+//     {
+//         *data_size = GImNodes->TextBuffer.size();
+//     }
 
-    return GImNodes->TextBuffer.c_str();
-}
+//     return GImNodes->TextBuffer.c_str();
+// }
 
-void LoadCurrentEditorStateFromIniString(const char* const data, const size_t data_size)
-{
-    LoadEditorStateFromIniString(&EditorContextGet(), data, data_size);
-}
+// EXTERN void LoadCurrentEditorStateFromIniString(const char* const data, const size_t data_size)
+// {
+//     LoadEditorStateFromIniString(&EditorContextGet(), data, data_size);
+// }
 
-void LoadEditorStateFromIniString(
-    ImNodesEditorContext* const editor_ptr,
-    const char* const           data,
-    const size_t                data_size)
-{
-    if (data_size == 0u)
-    {
-        return;
-    }
+// EXTERN void LoadEditorStateFromIniString(
+//     ImNodesEditorContext* const editor_ptr,
+//     const char* const           data,
+//     const size_t                data_size)
+// {
+//     if (data_size == 0u)
+//     {
+//         return;
+//     }
 
-    ImNodesEditorContext& editor = editor_ptr == NULL ? EditorContextGet() : *editor_ptr;
+//     ImNodesEditorContext& editor = editor_ptr == NULL ? EditorContextGet() : *editor_ptr;
 
-    char*       buf = (char*)ImGui::MemAlloc(data_size + 1);
-    const char* buf_end = buf + data_size;
-    memcpy(buf, data, data_size);
-    buf[data_size] = 0;
+//     char*       buf = (char*)ImGui::MemAlloc(data_size + 1);
+//     const char* buf_end = buf + data_size;
+//     memcpy(buf, data, data_size);
+//     buf[data_size] = 0;
 
-    void (*line_handler)(ImNodesEditorContext&, const char*);
-    line_handler = NULL;
-    char* line_end = NULL;
-    for (char* line = buf; line < buf_end; line = line_end + 1)
-    {
-        while (*line == '\n' || *line == '\r')
-        {
-            line++;
-        }
-        line_end = line;
-        while (line_end < buf_end && *line_end != '\n' && *line_end != '\r')
-        {
-            line_end++;
-        }
-        line_end[0] = 0;
+//     void (*line_handler)(ImNodesEditorContext&, const char*);
+//     line_handler = NULL;
+//     char* line_end = NULL;
+//     for (char* line = buf; line < buf_end; line = line_end + 1)
+//     {
+//         while (*line == '\n' || *line == '\r')
+//         {
+//             line++;
+//         }
+//         line_end = line;
+//         while (line_end < buf_end && *line_end != '\n' && *line_end != '\r')
+//         {
+//             line_end++;
+//         }
+//         line_end[0] = 0;
 
-        if (*line == ';' || *line == '\0')
-        {
-            continue;
-        }
+//         if (*line == ';' || *line == '\0')
+//         {
+//             continue;
+//         }
 
-        if (line[0] == '[' && line_end[-1] == ']')
-        {
-            line_end[-1] = 0;
-            if (strncmp(line + 1, "node", 4) == 0)
-            {
-                line_handler = NodeLineHandler;
-            }
-            else if (strcmp(line + 1, "editor") == 0)
-            {
-                line_handler = EditorLineHandler;
-            }
-        }
+//         if (line[0] == '[' && line_end[-1] == ']')
+//         {
+//             line_end[-1] = 0;
+//             if (strncmp(line + 1, "node", 4) == 0)
+//             {
+//                 line_handler = NodeLineHandler;
+//             }
+//             else if (strcmp(line + 1, "editor") == 0)
+//             {
+//                 line_handler = EditorLineHandler;
+//             }
+//         }
 
-        if (line_handler != NULL)
-        {
-            line_handler(editor, line);
-        }
-    }
-    ImGui::MemFree(buf);
-}
+//         if (line_handler != NULL)
+//         {
+//             line_handler(editor, line);
+//         }
+//     }
+//     ImGui::MemFree(buf);
+// }
 
-void SaveCurrentEditorStateToIniFile(const char* const file_name)
-{
-    SaveEditorStateToIniFile(&EditorContextGet(), file_name);
-}
+// void SaveCurrentEditorStateToIniFile(const char* const file_name)
+// {
+//     SaveEditorStateToIniFile(&EditorContextGet(), file_name);
+// }
 
-void SaveEditorStateToIniFile(const ImNodesEditorContext* const editor, const char* const file_name)
-{
-    size_t      data_size = 0u;
-    const char* data = SaveEditorStateToIniString(editor, &data_size);
-    FILE*       file = ImFileOpen(file_name, "wt");
-    if (!file)
-    {
-        return;
-    }
+// void SaveEditorStateToIniFile(const ImNodesEditorContext* const editor, const char* const file_name)
+// {
+//     size_t      data_size = 0u;
+//     const char* data = SaveEditorStateToIniString(editor, &data_size);
+//     FILE*       file = ImFileOpen(file_name, "wt");
+//     if (!file)
+//     {
+//         return;
+//     }
 
-    fwrite(data, sizeof(char), data_size, file);
-    fclose(file);
-}
+//     fwrite(data, sizeof(char), data_size, file);
+//     fclose(file);
+// }
 
-void LoadCurrentEditorStateFromIniFile(const char* const file_name)
-{
-    LoadEditorStateFromIniFile(&EditorContextGet(), file_name);
-}
+// EXTERN void LoadCurrentEditorStateFromIniFile(const char* const file_name)
+// {
+//     LoadEditorStateFromIniFile(&EditorContextGet(), file_name);
+// }
 
-void LoadEditorStateFromIniFile(ImNodesEditorContext* const editor, const char* const file_name)
-{
-    size_t data_size = 0u;
-    char*  file_data = (char*)ImFileLoadToMemory(file_name, "rb", &data_size);
+// EXTERN void LoadEditorStateFromIniFile(ImNodesEditorContext* const editor, const char* const file_name)
+// {
+//     size_t data_size = 0u;
+//     char*  file_data = (char*)ImFileLoadToMemory(file_name, "rb", &data_size);
 
-    if (!file_data)
-    {
-        return;
-    }
+//     if (!file_data)
+//     {
+//         return;
+//     }
 
-    LoadEditorStateFromIniString(editor, file_data, data_size);
-    ImGui::MemFree(file_data);
-}
-} // namespace IMNODES_NAMESPACE
+//     LoadEditorStateFromIniString(editor, file_data, data_size);
+//     ImGui::MemFree(file_data);
+// }
+// } // namespace IMNODES_NAMESPACE
